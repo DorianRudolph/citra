@@ -34,6 +34,7 @@ struct FramebufferLayout {
  * @return Newly created FramebufferLayout object with default screen regions initialized
  */
 FramebufferLayout DefaultFrameLayout(u32 width, u32 height, bool is_swapped, bool upright);
+FramebufferLayout DefaultFrameLayoutCrossEye(u32 width, u32 height, bool is_swapped, bool upright);
 
 /**
  * Factory method for constructing a FramebufferLayout with only the top or bottom screen

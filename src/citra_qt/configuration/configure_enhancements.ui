@@ -176,6 +176,16 @@
             <string>Reverse Interlaced</string>
            </property>
           </item>
+          <item>
+           <property name="text">
+            <string>Cross-Eye</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Wall-Eye</string>
+           </property>
+          </item>
          </widget>
         </item>
        </layout>
