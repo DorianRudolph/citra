@@ -132,9 +132,9 @@ FramebufferLayout DefaultFrameLayoutCrossEye(u32 width, u32 height, bool swapped
     Common::Rectangle<u32> screen_window_area {0, 0, width, height}, top_screen, bottom_screen;
 
     if (upright) {
-        constexpr auto RATIO = Core::kScreenTopWidth / 2.f
+        constexpr auto ratio = Core::kScreenTopWidth / 2.f
                                / (Core::kScreenTopHeight + Core::kScreenBottomHeight);
-        auto rect = maxRectangleCentered(screen_window_area, RATIO);
+        auto rect = maxRectangleCentered(screen_window_area, ratio);
         auto d = static_cast<u32>(rect.GetHeight() / 2. * Core::kScreenBottomWidth / Core::kScreenTopWidth);
         auto w = rect.GetWidth() / 4;
         top_screen = {rect.left, rect.top, rect.left + w, rect.bottom};
@@ -144,9 +144,9 @@ FramebufferLayout DefaultFrameLayoutCrossEye(u32 width, u32 height, bool swapped
             std::swap(top_screen.right, bottom_screen.right);
         }
     } else {
-        constexpr auto RATIO = (Core::kScreenTopHeight + Core::kScreenBottomHeight) / 2.f
+        constexpr auto ratio = (Core::kScreenTopHeight + Core::kScreenBottomHeight) / 2.f
                                / Core::kScreenTopWidth;
-        auto rect = maxRectangleCentered(screen_window_area, RATIO);
+        auto rect = maxRectangleCentered(screen_window_area, ratio);
         auto d = static_cast<u32>(rect.GetWidth() / 4. * Core::kScreenBottomWidth / Core::kScreenTopWidth);
         auto w = rect.GetHeight() / 2;
         auto h = rect.GetHeight() / 2;
@@ -197,6 +197,19 @@ FramebufferLayout SingleFrameLayout(u32 width, u32 height, bool swapped, bool up
     res.top_screen = top_screen;
     res.bottom_screen = bot_screen;
     return res;
+}
+
+FramebufferLayout SingleFrameLayoutCrossEye(u32 width, u32 height, bool swapped, bool upright) {
+    ASSERT(width > 0);
+    ASSERT(height > 0);
+
+    Common::Rectangle<u32> screen_window_area{0, 0, width, height};
+    auto top_screen = maxRectangleCentered(screen_window_area, (upright ? TOP_SCREEN_UPRIGHT_ASPECT_RATIO : TOP_SCREEN_ASPECT_RATIO) / 2);
+    top_screen.right = top_screen.left + top_screen.GetWidth() / 2;
+    auto bot_screen = maxRectangleCentered(screen_window_area, (upright ? BOT_SCREEN_UPRIGHT_ASPECT_RATIO : BOT_SCREEN_ASPECT_RATIO) / 2);
+    bot_screen.right = bot_screen.left + bot_screen.GetWidth() / 2;
+
+    return {width, height, !swapped, swapped, top_screen, bot_screen, !upright};
 }
 
 FramebufferLayout LargeFrameLayout(u32 width, u32 height, bool swapped, bool upright) {
