@@ -314,6 +314,8 @@ void GMainWindow::InitializeWidgets() {
     actionGroup_ScreenLayouts->addAction(ui->action_Screen_Layout_Single_Screen);
     actionGroup_ScreenLayouts->addAction(ui->action_Screen_Layout_Large_Screen);
     actionGroup_ScreenLayouts->addAction(ui->action_Screen_Layout_Side_by_Side);
+    actionGroup_ScreenLayouts->addAction(ui->action_Screen_Layout_Default_Integer);
+    actionGroup_ScreenLayouts->addAction(ui->action_Screen_Layout_Single_Screen_Integer);
 }
 
 void GMainWindow::InitializeDebugWidgets() {
@@ -746,6 +748,10 @@ void GMainWindow::ConnectMenuEvents() {
     connect(ui->action_Screen_Layout_Large_Screen, &QAction::triggered, this,
             &GMainWindow::ChangeScreenLayout);
     connect(ui->action_Screen_Layout_Side_by_Side, &QAction::triggered, this,
+            &GMainWindow::ChangeScreenLayout);
+    connect(ui->action_Screen_Layout_Default_Integer, &QAction::triggered, this,
+            &GMainWindow::ChangeScreenLayout);
+    connect(ui->action_Screen_Layout_Single_Screen_Integer, &QAction::triggered, this,
             &GMainWindow::ChangeScreenLayout);
     connect(ui->action_Screen_Layout_Swap_Screens, &QAction::triggered, this,
             &GMainWindow::OnSwapScreens);
@@ -1676,6 +1682,10 @@ void GMainWindow::ChangeScreenLayout() {
         new_layout = Settings::LayoutOption::LargeScreen;
     } else if (ui->action_Screen_Layout_Side_by_Side->isChecked()) {
         new_layout = Settings::LayoutOption::SideScreen;
+    } else if (ui->action_Screen_Layout_Default_Integer->isChecked()) {
+        new_layout = Settings::LayoutOption::DefaultInteger;
+    } else if (ui->action_Screen_Layout_Single_Screen_Integer->isChecked()) {
+        new_layout = Settings::LayoutOption::SingleScreenInteger;
     }
 
     Settings::values.layout_option = new_layout;
@@ -2399,6 +2409,10 @@ void GMainWindow::SyncMenuUISettings() {
                                                       Settings::LayoutOption::LargeScreen);
     ui->action_Screen_Layout_Side_by_Side->setChecked(Settings::values.layout_option ==
                                                       Settings::LayoutOption::SideScreen);
+    ui->action_Screen_Layout_Default_Integer->setChecked(Settings::values.layout_option ==
+                                                         Settings::LayoutOption::DefaultInteger);
+    ui->action_Screen_Layout_Single_Screen_Integer->setChecked(Settings::values.layout_option ==
+                                                               Settings::LayoutOption::SingleScreenInteger);
     ui->action_Screen_Layout_Swap_Screens->setChecked(Settings::values.swap_screen);
     ui->action_Screen_Layout_Upright_Screens->setChecked(Settings::values.upright_screen);
 }

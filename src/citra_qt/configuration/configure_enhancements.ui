@@ -257,6 +257,16 @@
             <string>Side by Side</string>
            </property>
           </item>
+          <item>
+           <property name="text">
+            <string>Default (Integer)</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Single Screen (Integer)</string>
+           </property>
+          </item>
          </widget>
         </item>
        </layout>
