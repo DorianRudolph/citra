@@ -18,6 +18,7 @@ struct FramebufferLayout {
     Common::Rectangle<u32> top_screen;
     Common::Rectangle<u32> bottom_screen;
     bool is_rotated = true;
+    u32 crossEyeOffset = 0;
 
     /**
      * Returns the ration of pixel size of the top screen, compared to the native size of the 3DS

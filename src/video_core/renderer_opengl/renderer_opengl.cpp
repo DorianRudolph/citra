@@ -989,6 +989,9 @@ void RendererOpenGL::DrawScreens(const Layout::FramebufferLayout& layout, bool f
         Settings::values.render_3d == Settings::StereoRenderOption::Interlaced ||
         Settings::values.render_3d == Settings::StereoRenderOption::ReverseInterlaced;
 
+    const bool crossEye = Settings::values.render_3d == Settings::StereoRenderOption::CrossEye;
+    const bool wallEye = Settings::values.render_3d == Settings::StereoRenderOption::WallEye;
+
     // Bind a second texture for the right eye if in Anaglyph mode
     if (stereo_single_screen) {
         glUniform1i(uniform_color_texture_r, 1);
@@ -1014,6 +1017,14 @@ void RendererOpenGL::DrawScreens(const Layout::FramebufferLayout& layout, bool f
                 DrawSingleScreenStereoRotated(
                     screen_infos[0], screen_infos[1], (float)top_screen.left, (float)top_screen.top,
                     (float)top_screen.GetWidth(), (float)top_screen.GetHeight());
+            } else if (crossEye || wallEye) {
+                DrawSingleScreenRotated(screen_infos[0], float(top_screen.left + layout.crossEyeOffset * crossEye),
+                                        (float)top_screen.top, (float)top_screen.GetWidth(),
+                                        (float)top_screen.GetHeight());
+                glUniform1i(uniform_layer, 1);
+                DrawSingleScreenRotated(screen_infos[1], float(top_screen.left + layout.crossEyeOffset * wallEye),
+                                        (float)top_screen.top, (float)top_screen.GetWidth(),
+                                        (float)top_screen.GetHeight());
             }
         } else {
             if (Settings::values.render_3d == Settings::StereoRenderOption::Off) {
@@ -1031,6 +1042,14 @@ void RendererOpenGL::DrawScreens(const Layout::FramebufferLayout& layout, bool f
                 DrawSingleScreenStereo(screen_infos[0], screen_infos[1], (float)top_screen.left,
                                        (float)top_screen.top, (float)top_screen.GetWidth(),
                                        (float)top_screen.GetHeight());
+            } else if (crossEye || wallEye) {
+                DrawSingleScreen(screen_infos[0], float(top_screen.left + layout.crossEyeOffset * crossEye),
+                                 (float)top_screen.top, (float)top_screen.GetWidth(),
+                                 (float)top_screen.GetHeight());
+                glUniform1i(uniform_layer, 1);
+                DrawSingleScreen(screen_infos[1], float(top_screen.left + layout.crossEyeOffset * wallEye),
+                                 (float)top_screen.top, (float)top_screen.GetWidth(),
+                                 (float)top_screen.GetHeight());
             }
         }
     }
@@ -1055,6 +1074,14 @@ void RendererOpenGL::DrawScreens(const Layout::FramebufferLayout& layout, bool f
                                               (float)bottom_screen.left, (float)bottom_screen.top,
                                               (float)bottom_screen.GetWidth(),
                                               (float)bottom_screen.GetHeight());
+            } else if (crossEye || wallEye) {
+                DrawSingleScreenRotated(screen_infos[2], float(bottom_screen.left + layout.crossEyeOffset * crossEye),
+                                        (float)bottom_screen.top, (float)bottom_screen.GetWidth(),
+                                        (float)bottom_screen.GetHeight());
+                glUniform1i(uniform_layer, 1);
+                DrawSingleScreenRotated(screen_infos[2], float(bottom_screen.left + layout.crossEyeOffset * wallEye),
+                                        (float)bottom_screen.top, (float)bottom_screen.GetWidth(),
+                                        (float)bottom_screen.GetHeight());
             }
         } else {
             if (Settings::values.render_3d == Settings::StereoRenderOption::Off) {
@@ -1074,6 +1101,14 @@ void RendererOpenGL::DrawScreens(const Layout::FramebufferLayout& layout, bool f
                 DrawSingleScreenStereo(screen_infos[2], screen_infos[2], (float)bottom_screen.left,
                                        (float)bottom_screen.top, (float)bottom_screen.GetWidth(),
                                        (float)bottom_screen.GetHeight());
+            } else if (crossEye || wallEye) {
+                DrawSingleScreen(screen_infos[2], float(bottom_screen.left + layout.crossEyeOffset * crossEye),
+                                 (float)bottom_screen.top, (float)bottom_screen.GetWidth(),
+                                 (float)bottom_screen.GetHeight());
+                glUniform1i(uniform_layer, 1);
+                DrawSingleScreen(screen_infos[2], float(bottom_screen.left + layout.crossEyeOffset * wallEye),
+                                 (float)bottom_screen.top, (float)bottom_screen.GetWidth(),
+                                 (float)bottom_screen.GetHeight());
             }
         }
     }

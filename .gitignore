@@ -12,6 +12,7 @@ src/common/scm_rev.cpp
 .vs/
 .vscode/
 CMakeLists.txt.user*
+cmake-build-*
 
 # *nix related
 # Common convention for backup or temporary files

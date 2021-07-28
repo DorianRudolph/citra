@@ -151,7 +151,16 @@ void EmuWindow::UpdateCurrentFramebufferLayout(unsigned width, unsigned height) 
     const auto min_size =
         Layout::GetMinimumSizeFromLayout(layout_option, Settings::values.upright_screen);
 
-    if (Settings::values.custom_layout == true) {
+    if (Settings::values.render_3d == Settings::StereoRenderOption::WallEye ||
+        Settings::values.render_3d == Settings::StereoRenderOption::CrossEye) {
+        if (layout_option == Settings::LayoutOption::SingleScreen) {
+            layout = Layout::SingleFrameLayoutCrossEye(width, height, Settings::values.swap_screen,
+                                                       Settings::values.upright_screen);
+        } else {
+            layout = Layout::DefaultFrameLayoutCrossEye(width, height, Settings::values.swap_screen,
+                                                        Settings::values.upright_screen);
+        }
+    } else if (Settings::values.custom_layout) {
         layout = Layout::CustomFrameLayout(width, height);
     } else {
         width = std::max(width, min_size.first);

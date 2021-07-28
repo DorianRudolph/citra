@@ -130,12 +130,14 @@ FramebufferLayout DefaultFrameLayoutCrossEye(u32 width, u32 height, bool swapped
     ASSERT(height > 0);
 
     Common::Rectangle<u32> screen_window_area {0, 0, width, height}, top_screen, bottom_screen;
+    u32 offset;
+    constexpr auto offsetRatio = float(Core::kScreenTopWidth - Core::kScreenBottomWidth) / Core::kScreenTopWidth;
 
     if (upright) {
         constexpr auto ratio = Core::kScreenTopWidth / 2.f
                                / (Core::kScreenTopHeight + Core::kScreenBottomHeight);
         auto rect = maxRectangleCentered(screen_window_area, ratio);
-        auto d = static_cast<u32>(rect.GetHeight() / 2. * Core::kScreenBottomWidth / Core::kScreenTopWidth);
+        auto d = static_cast<u32>(rect.GetHeight() * offsetRatio / 2);
         auto w = rect.GetWidth() / 4;
         top_screen = {rect.left, rect.top, rect.left + w, rect.bottom};
         bottom_screen = {rect.left + w, rect.top + d, rect.left + 2 * w, rect.bottom - d};
@@ -143,12 +145,13 @@ FramebufferLayout DefaultFrameLayoutCrossEye(u32 width, u32 height, bool swapped
             std::swap(top_screen.left, bottom_screen.left);
             std::swap(top_screen.right, bottom_screen.right);
         }
+        offset = 2 * w;
     } else {
         constexpr auto ratio = (Core::kScreenTopHeight + Core::kScreenBottomHeight) / 2.f
                                / Core::kScreenTopWidth;
         auto rect = maxRectangleCentered(screen_window_area, ratio);
-        auto d = static_cast<u32>(rect.GetWidth() / 4. * Core::kScreenBottomWidth / Core::kScreenTopWidth);
-        auto w = rect.GetHeight() / 2;
+        auto d = static_cast<u32>(rect.GetWidth() * offsetRatio / 4);
+        auto w = rect.GetWidth() / 2;
         auto h = rect.GetHeight() / 2;
         top_screen = {rect.left, rect.top, rect.left + w, rect.top + h};
         bottom_screen = {rect.left + d, rect.top + h, rect.left + w - d, rect.top + 2 * h};
@@ -156,9 +159,10 @@ FramebufferLayout DefaultFrameLayoutCrossEye(u32 width, u32 height, bool swapped
             std::swap(top_screen.top, bottom_screen.top);
             std::swap(top_screen.bottom, bottom_screen.bottom);
         }
+        offset = w;
     }
 
-    return {width, height, true, true, top_screen, bottom_screen, !upright};
+    return {width, height, true, true, top_screen, bottom_screen, !upright, offset};
 }
 
 FramebufferLayout SingleFrameLayout(u32 width, u32 height, bool swapped, bool upright) {
@@ -208,8 +212,9 @@ FramebufferLayout SingleFrameLayoutCrossEye(u32 width, u32 height, bool swapped,
     top_screen.right = top_screen.left + top_screen.GetWidth() / 2;
     auto bot_screen = maxRectangleCentered(screen_window_area, (upright ? BOT_SCREEN_UPRIGHT_ASPECT_RATIO : BOT_SCREEN_ASPECT_RATIO) / 2);
     bot_screen.right = bot_screen.left + bot_screen.GetWidth() / 2;
+    auto offset = (swapped ? bot_screen : top_screen).GetWidth();
 
-    return {width, height, !swapped, swapped, top_screen, bot_screen, !upright};
+    return {width, height, !swapped, swapped, top_screen, bot_screen, !upright, offset};
 }
 
 FramebufferLayout LargeFrameLayout(u32 width, u32 height, bool swapped, bool upright) {
